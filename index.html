@@ -30,40 +30,44 @@
     const ctx = canvas.getContext('2d');
     let drawing = false;
 
-    // Adjust the canvas size based on the iframe's width and height
-    canvas.width = window.innerWidth * 0.8;  // Set canvas width as 80% of the viewport
-    canvas.height = window.innerHeight * 0.6;  // Set canvas height as 60% of the viewport
+    // Set the canvas size dynamically based on the viewport size
+    canvas.width = window.innerWidth * 0.8;  // Set canvas width to 80% of viewport width
+    canvas.height = window.innerHeight * 0.6;  // Set canvas height to 60% of viewport height
 
-    // Adjust mouse position according to canvas
+    // Get mouse position relative to the canvas
     function getMousePos(e) {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;  // Get X position relative to canvas
-      const y = e.clientY - rect.top;   // Get Y position relative to canvas
+      const rect = canvas.getBoundingClientRect();  // Get the canvas's position on the page
+      const x = e.clientX - rect.left;  // Get the X coordinate relative to the canvas
+      const y = e.clientY - rect.top;   // Get the Y coordinate relative to the canvas
       return { x, y };
     }
 
+    // Start drawing when the mouse is pressed down
     canvas.addEventListener('mousedown', (e) => {
       drawing = true;
-      const { x, y } = getMousePos(e);
+      const { x, y } = getMousePos(e);  // Get mouse position relative to the canvas
       ctx.beginPath();
-      ctx.moveTo(x, y);  // Move to the start position
+      ctx.moveTo(x, y);  // Move to the starting point
     });
 
+    // Draw when the mouse moves
     canvas.addEventListener('mousemove', (e) => {
-      if (!drawing) return;
-      const { x, y } = getMousePos(e);
-      ctx.lineWidth = 1;  // Line thickness
-      ctx.lineCap = 'round'; // Line cap style
-      ctx.strokeStyle = 'black'; // Line color
+      if (!drawing) return;  // Don't draw if the mouse is not pressed
+      const { x, y } = getMousePos(e);  // Get the current mouse position
+      ctx.lineWidth = 1;  // Set line thickness to 1px
+      ctx.lineCap = 'round';  // Set rounded end for the lines
+      ctx.strokeStyle = 'black';  // Set the line color to black
       ctx.lineTo(x, y);  // Draw to the current mouse position
       ctx.stroke();
     });
 
+    // Stop drawing when the mouse is released
     canvas.addEventListener('mouseup', () => {
       drawing = false;
       ctx.closePath();
     });
 
+    // Resize the canvas dynamically when the window size changes
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth * 0.8;
       canvas.height = window.innerHeight * 0.6;
