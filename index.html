@@ -40,18 +40,27 @@
     // Get the canvas offset relative to the page
     const rect = canvas.getBoundingClientRect();
 
+    // Adjust mouse position with respect to canvas
+    function getMousePos(e) {
+      const x = e.clientX - rect.left;  // Calculate X position relative to canvas
+      const y = e.clientY - rect.top;   // Calculate Y position relative to canvas
+      return { x, y };
+    }
+
     canvas.addEventListener('mousedown', (e) => {
       drawing = true;
+      const { x, y } = getMousePos(e);
       ctx.beginPath();
-      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);  // Adjust coordinates based on canvas position
+      ctx.moveTo(x, y);  // Move to the starting position
     });
 
     canvas.addEventListener('mousemove', (e) => {
       if (!drawing) return;
+      const { x, y } = getMousePos(e);
       ctx.lineWidth = 1;  // Set line thickness to 1
       ctx.lineCap = 'round';
       ctx.strokeStyle = 'black';
-      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);  // Adjust coordinates based on canvas position
+      ctx.lineTo(x, y);  // Draw line to current mouse position
       ctx.stroke();
     });
 
