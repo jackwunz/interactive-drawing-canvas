@@ -15,12 +15,10 @@
       background-color: #ffffff;
     }
     canvas {
-      border: 0.3px solid black;
+      border: 1px solid black;
       cursor: crosshair;
-      width: 100%;
-      height: 100%;
-      max-width: 1800px;  /* Optional: To limit max width */
-      max-height: 1800px;  /* Optional: To limit max height */
+      width: 80vw;  /* Set width relative to viewport */
+      height: 80vh; /* Set height relative to viewport */
     }
   </style>
 </head>
@@ -31,19 +29,17 @@
     const canvas = document.getElementById('drawingCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Set canvas size
-    canvas.width = window.innerWidth * 0.8;
-    canvas.height = window.innerHeight * 0.8;
-
     let drawing = false;
 
-    // Get the canvas offset relative to the page
-    const rect = canvas.getBoundingClientRect();
+    // Adjust the canvas size
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
 
-    // Adjust mouse position with respect to canvas
+    // Adjust mouse position according to canvas
     function getMousePos(e) {
-      const x = e.clientX - rect.left;  // Calculate X position relative to canvas
-      const y = e.clientY - rect.top;   // Calculate Y position relative to canvas
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;  // Get X position relative to canvas
+      const y = e.clientY - rect.top;   // Get Y position relative to canvas
       return { x, y };
     }
 
@@ -51,16 +47,16 @@
       drawing = true;
       const { x, y } = getMousePos(e);
       ctx.beginPath();
-      ctx.moveTo(x, y);  // Move to the starting position
+      ctx.moveTo(x, y);  // Move to the start position
     });
 
     canvas.addEventListener('mousemove', (e) => {
       if (!drawing) return;
       const { x, y } = getMousePos(e);
-      ctx.lineWidth = 1;  // Set line thickness to 0.1
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = 'black';
-      ctx.lineTo(x, y);  // Draw line to current mouse position
+      ctx.lineWidth = 1;  // Line thickness
+      ctx.lineCap = 'round'; // Line cap style
+      ctx.strokeStyle = 'black'; // Line color
+      ctx.lineTo(x, y);  // Draw to the current mouse position
       ctx.stroke();
     });
 
@@ -70,8 +66,9 @@
     });
 
     window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth * 0.8;
-      canvas.height = window.innerHeight * 0.8;
+      // Re-adjust canvas size on window resize
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
     });
   </script>
 </body>
