@@ -31,15 +31,19 @@
     const canvas = document.getElementById('drawingCanvas');
     const ctx = canvas.getContext('2d');
 
+    // Set canvas size
     canvas.width = window.innerWidth * 0.8;
     canvas.height = window.innerHeight * 0.8;
 
     let drawing = false;
 
+    // Get the canvas offset relative to the page
+    const rect = canvas.getBoundingClientRect();
+
     canvas.addEventListener('mousedown', (e) => {
       drawing = true;
       ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);  // Adjust coordinates based on canvas position
     });
 
     canvas.addEventListener('mousemove', (e) => {
@@ -47,7 +51,7 @@
       ctx.lineWidth = 1;  // Set line thickness to 1
       ctx.lineCap = 'round';
       ctx.strokeStyle = 'black';
-      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);  // Adjust coordinates based on canvas position
       ctx.stroke();
     });
 
