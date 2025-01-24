@@ -11,14 +11,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      height: 100%;
       background-color: #ffffff;
     }
     canvas {
       border: 1px solid black;
       cursor: crosshair;
-      width: 1800vw;  /* Set width relative to viewport */
-      height: 802vh; /* Set height relative to viewport */
+      width: 80vw; /* 80% of the viewport width */
+      height: 60vh; /* 60% of the viewport height */
     }
   </style>
 </head>
@@ -28,12 +28,11 @@
   <script>
     const canvas = document.getElementById('drawingCanvas');
     const ctx = canvas.getContext('2d');
-
     let drawing = false;
 
-    // Adjust the canvas size
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+    // Adjust the canvas size based on the iframe's width and height
+    canvas.width = window.innerWidth * 0.8;  // Set canvas width as 80% of the viewport
+    canvas.height = window.innerHeight * 0.6;  // Set canvas height as 60% of the viewport
 
     // Adjust mouse position according to canvas
     function getMousePos(e) {
@@ -66,9 +65,8 @@
     });
 
     window.addEventListener('resize', () => {
-      // Re-adjust canvas size on window resize
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      canvas.width = window.innerWidth * 0.8;
+      canvas.height = window.innerHeight * 0.6;
     });
   </script>
 </body>
