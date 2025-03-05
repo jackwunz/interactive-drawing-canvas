@@ -13,12 +13,13 @@
       align-items: center;
       height: 100%;
       background-color: #ffffff;
+      touch-action: none; /* Prevent scrolling while drawing */
     }
     canvas {
       border: 1px solid black;
       cursor: crosshair;
-      width: 80vw; /* 80% of the viewport width */
-      height: 60vh; /* 60% of the viewport height */
+      width: 80vw;
+      height: 60vh;
     }
   </style>
 </head>
@@ -30,48 +31,64 @@
     const ctx = canvas.getContext('2d');
     let drawing = false;
 
-    // Set the canvas size dynamically based on the viewport size
-    canvas.width = window.innerWidth * 0.8;  // Set canvas width to 80% of viewport width
-    canvas.height = window.innerHeight * 0.6;  // Set canvas height to 60% of viewport height
-
-    // Get mouse position relative to the canvas
-    function getMousePos(e) {
-      const rect = canvas.getBoundingClientRect();  // Get the canvas's position on the page
-      const x = e.clientX - rect.left;  // Get the X coordinate relative to the canvas
-      const y = e.clientY - rect.top;   // Get the Y coordinate relative to the canvas
-      return { x, y };
-    }
-
-    // Start drawing when the mouse is pressed down
-    canvas.addEventListener('mousedown', (e) => {
-      drawing = true;
-      const { x, y } = getMousePos(e);  // Get mouse position relative to the canvas
-      ctx.beginPath();
-      ctx.moveTo(x, y);  // Move to the starting point
-    });
-
-    // Draw when the mouse moves
-    canvas.addEventListener('mousemove', (e) => {
-      if (!drawing) return;  // Don't draw if the mouse is not pressed
-      const { x, y } = getMousePos(e);  // Get the current mouse position
-      ctx.lineWidth = 1;  // Set line thickness to 1px
-      ctx.lineCap = 'round';  // Set rounded end for the lines
-      ctx.strokeStyle = 'black';  // Set the line color to black
-      ctx.lineTo(x, y);  // Draw to the current mouse position
-      ctx.stroke();
-    });
-
-    // Stop drawing when the mouse is released
-    canvas.addEventListener('mouseup', () => {
-      drawing = false;
-      ctx.closePath();
-    });
-
-    // Resize the canvas dynamically when the window size changes
-    window.addEventListener('resize', () => {
+    // Set the canvas size dynamically
+    function resizeCanvas() {
       canvas.width = window.innerWidth * 0.8;
       canvas.height = window.innerHeight * 0.6;
-    });
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Get mouse or touch position relative to the canvas
+    function getPosition(e) {
+      const rect = canvas.getBoundingClientRect();
+      if (e.touches) { // Touch event
+        return {
+          x: e.touches[0].clientX - rect.left,
+          y: e.touches[0].clientY - rect.top
+        };
+      } else { // Mouse event
+        return {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        };
+      }
+    }
+
+    function startDrawing(e) {
+      e.preventDefault(); // Prevent scrolling on touch devices
+      drawing = true;
+      const { x, y } = getPosition(e);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
+
+    function draw(e) {
+      if (!drawing) return;
+      e.preventDefault();
+      const { x, y } = getPosition(e);
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = 'black';
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+
+    function stopDrawing() {
+      drawing = false;
+      ctx.closePath();
+    }
+
+    // Mouse events
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseleave', stopDrawing);
+
+    // Touch events
+    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDrawing);
   </script>
 </body>
 </html>
